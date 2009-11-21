@@ -1,6 +1,11 @@
 package edu.bu;
 
-//player did move to make newState
+/**
+ * 
+ * @author hmartinez
+ *
+ * Class to wrap a current state and move
+ */
 public class StateMove {
 	private AtroposState newState;
 	private AtroposMove move;

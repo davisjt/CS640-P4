@@ -1,5 +1,11 @@
 package edu.bu;
 
+/**
+ * 
+ * @author jdavis
+ * 
+ * Houses a move in Atropos with a circle and color
+ */
 public class AtroposMove {
 	private AtroposCircle circle;
 	private Colors color;
