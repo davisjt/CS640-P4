@@ -276,7 +276,7 @@ public class AtroposState {
     }
     int height = this.lastPlay.height();
     int leftDistance = this.lastPlay.leftDistance();
-    int rightDistance = this.lastPlay.rightDistance();
+    //int rightDistance = this.lastPlay.rightDistance();
     return ((this.circles[height - 1]
                          [leftDistance].isColored()) &&
             (this.circles[height - 1]

@@ -17,5 +17,11 @@ public class MainPlayer {
 	public static void main(String[] args) throws IOException {
 		AtroposState state = new AtroposStateReader(new StringReader(args[0])).read();
 		System.out.println(state.toString());
+		
+		// Calculate next move
+		Player player = new Player();
+		AtroposState newstate = player.makeMove(state);
+		
+		
 	}
 }
