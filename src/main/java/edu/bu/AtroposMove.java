@@ -1,28 +1,22 @@
 package edu.bu;
 
+/**
+ * 
+ * @author jdavis
+ * 
+ * Houses a move in Atropos with a circle and color
+ */
 public class AtroposMove {
-	private int x;
-	private int y;
-	private int z;
+	private AtroposCircle circle;
 	private Colors color;
 	
-	AtroposMove(int x, int y, int z, Colors color) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	AtroposMove(AtroposCircle circle, Colors color) {
+		this.circle = circle;
 		this.color = color;
 	}
 	
-	int getX() {
-		return x;
-	}
-	
-	int getY() {
-		return y;
-	}
-	
-	int getZ() {
-		return z;
+	AtroposCircle getCircle() {
+		return circle;
 	}
 	
 	Colors getColor() {

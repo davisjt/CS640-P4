@@ -1,6 +1,11 @@
 package edu.bu;
 
-
+/**
+ * 
+ * @author jdavis
+ *
+ * Enumeration for the colors used
+ */
 public enum Colors {
 	Uncolored (0), 
 	Red (1), 
