@@ -8,9 +8,8 @@
  */
 //package something;
  
-import java.lang.*;
-import java.io.*;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Vector;
 
 public class AtroposState {
 
@@ -276,7 +275,6 @@ public class AtroposState {
     }
     int height = this.lastPlay.height();
     int leftDistance = this.lastPlay.leftDistance();
-    int rightDistance = this.lastPlay.rightDistance();
     return ((this.circles[height - 1]
                          [leftDistance].isColored()) &&
             (this.circles[height - 1]
@@ -293,8 +291,8 @@ public class AtroposState {
   
   /** Determines whether the two colors are not equal if both are colored. */
   private boolean colorConflict(int colorOne, int colorTwo) {
-    return ((colorOne != this.UNCOLORED) &&
-            (colorTwo != this.UNCOLORED) &&
+    return ((colorOne != UNCOLORED) &&
+            (colorTwo != UNCOLORED) &&
             (colorOne != colorTwo));
   }
   
@@ -303,16 +301,6 @@ public class AtroposState {
    */
   private AtroposCircle circleAt(int height, int leftDistance) {
     return this.circles[height][leftDistance];
-  }
-  
-  /**
-   * Determines whether a circle is colored.
-   *
-   * @param height        Height of the circle.
-   * @param leftDistance  Distance of the circle from the left.
-   */
-  private boolean circleIsColored(int height, int leftDistance) {
-    return this.circles[height][leftDistance].isColored();
   }
   
   /**

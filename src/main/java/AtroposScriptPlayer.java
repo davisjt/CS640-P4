@@ -8,9 +8,8 @@
  */
 //package something;
  
-import java.lang.*;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
 
 public class AtroposScriptPlayer extends AtroposPlayer {
 

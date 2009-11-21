@@ -8,9 +8,8 @@
  */
 //package something;
  
-import java.lang.*;
-import java.io.*;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Vector;
 
 public class AtroposPlayer {
 
@@ -25,11 +24,6 @@ public class AtroposPlayer {
    * Name of this player.
    */
   protected String name;
-
-  /**
-    * Blank Color.
-    */
-  private static final int UNCOLORED = 0;
 
   /**
     * Color Red.
@@ -63,23 +57,23 @@ public class AtroposPlayer {
    * 
    */
   public AtroposCircle getNextPlay(AtroposState state) {
-    Vector circles = new Vector();
+    Vector<AtroposCircle> circles = new Vector<AtroposCircle>();
     AtroposCircle circle;
     int randomIndex;
-    for (Iterator circleIterator = state.playableCircles();
+    for (Iterator<AtroposCircle> circleIterator = state.playableCircles();
          circleIterator.hasNext(); ) {
-      circle = (AtroposCircle) circleIterator.next();
-      if (!this.wouldLose(state.clone(), circle.clone(), this.RED) ||
-          !this.wouldLose(state.clone(), circle.clone(), this.BLUE) ||
-          !this.wouldLose(state.clone(), circle.clone(), this.GREEN)) {
+      circle = circleIterator.next();
+      if (!this.wouldLose(state.clone(), circle.clone(), RED) ||
+          !this.wouldLose(state.clone(), circle.clone(), BLUE) ||
+          !this.wouldLose(state.clone(), circle.clone(), GREEN)) {
         circles.add(circle);
       }
     }
     if (circles.isEmpty()) {
       //no moves are safe.  Time to lose
-      Iterator circleIterator = state.playableCircles();
+      Iterator<AtroposCircle> circleIterator = state.playableCircles();
       circle = (AtroposCircle) circleIterator.next();
-      randomIndex = this.RED;
+      randomIndex = RED;
     } else {
       randomIndex = (int) Math.floor(circles.size() * Math.random());
       circle = (AtroposCircle) circles.get(randomIndex);
