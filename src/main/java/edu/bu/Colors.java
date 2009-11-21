@@ -1,5 +1,6 @@
 package edu.bu;
 
+
 public enum Colors {
 	Uncolored (0), 
 	Red (1), 

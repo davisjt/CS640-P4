@@ -9,9 +9,8 @@ package edu.bu;
  */
 //package something;
  
-import java.lang.*;
-import java.io.*;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Vector;
 
 public class AtroposState {
 
