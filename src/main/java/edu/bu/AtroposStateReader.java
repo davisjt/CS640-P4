@@ -36,10 +36,10 @@ public class AtroposStateReader {
 		Pair<List<List<Integer>>, List<Integer>> state = seq(rows, lastPlay).parse(result.toString()).token;
 		int size = state.first.size();
 		AtroposCircle[][] board = new AtroposCircle[size][size];
-		for (int i = size - 1; i > 0; --i) {
+		for (int i = size - 1; i >= 0; --i) {
 			List<Integer> row = state.first.get(i);
-			for (int j = 0; j < row.size(); ++j) {
-				board[i][j] = new AtroposCircle(row.get(j), i, j, row.size()
+			for (int j = 0; j < size; ++j) {
+				board[i][j] = new AtroposCircle(j < row.size() ? row.get(j) : Colors.Uncolored.getValue(), i, j, row.size()
 						- j);
 			}
 		}
