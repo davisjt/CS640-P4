@@ -22,12 +22,12 @@ public class AtroposState {
     *
     * The first coordinate is the height, the second is the distance from the left.
     */
-  private AtroposCircle[][] circles;
+  public AtroposCircle[][] circles;
 
   /**
     * Last-colored circle.
     */
-  private AtroposCircle lastPlay;
+  public AtroposCircle lastPlay;
   
   //constants
   
