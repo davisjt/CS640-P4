@@ -8,9 +8,8 @@
  */
 //package something;
  
-import java.lang.*;
-import java.io.*;
-import java.util.*;
+import java.util.Random;
+import java.util.Stack;
 
 public class AtroposGame {
 
@@ -159,7 +158,6 @@ public class AtroposGame {
   public static void main(String[] args) { 
     AtroposPlayer playerOne;
     AtroposPlayer playerTwo;
-    String s = "6";
     int gameSize = Integer.parseInt(args[0]);
     if (args.length == 1) {
       playerOne = new AtroposPlayer("Default One");

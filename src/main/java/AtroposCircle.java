@@ -10,7 +10,6 @@
  
 //import java.lang.*;
 //import java.io.*;
-import java.util.*;
 
 public class AtroposCircle {
 
@@ -24,16 +23,6 @@ public class AtroposCircle {
     */
   private static final int RED = 1;
   
-  /**
-    * Color Blue.
-    */
-  private static final int BLUE = 2;
-  
-  /**
-    * Color Green.
-    */
-  private static final int GREEN = 3;
-
   /**
     * Color of the circle.
     */
