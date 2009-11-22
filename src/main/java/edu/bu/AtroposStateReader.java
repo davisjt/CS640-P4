@@ -36,13 +36,21 @@ public class AtroposStateReader {
 		Pair<List<List<Integer>>, List<Integer>> state = seq(rows, lastPlay).parse(result.toString()).token;
 		int size = state.first.size();
 		AtroposCircle[][] board = new AtroposCircle[size][size];
-		for (int i = 0; i < size; ++i) {
+		for (int i = 0; i < size - 1; ++i) {
 			List<Integer> row = state.first.get(i);
 			for (int j = 0; j < size; ++j) {
-				board[size - i - 1][j] = new AtroposCircle(j < row.size() ? row.get(j) : Colors.Uncolored.getValue(), i, j, row.size()
-						- j);
+				int height = size - i - 1;
+				board[height][j] = new AtroposCircle(j < row.size() ? row.get(j) : Colors.Uncolored.getValue(), size - i - 1, j, size - height - j);
 			}
 		}
+		// unroll last iteration
+		List<Integer> row = state.first.get(size - 1);
+		board[0][0] = new AtroposCircle(Colors.Uncolored.getValue(), 0, 0, size - 1);
+		for (int j = 1; j < size; ++j) {
+			board[0][j] = new AtroposCircle(j < row.size() ? row.get(j)
+					: Colors.Uncolored.getValue(), 0, j, size - 1 - j);
+		}
+		
 		return new AtroposState(board, new AtroposCircle(state.second.get(0),
 				state.second.get(1), state.second.get(2), state.second.get(3)));
 	}
