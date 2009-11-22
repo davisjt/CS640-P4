@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,7 +34,8 @@ public class AtroposStateReader {
 			}
 			result.append((char) read);
 		}
-		Pair<List<List<Integer>>, List<Integer>> state = seq(rows, lastPlay).parse(result.toString()).token;
+		Pair<List<List<Integer>>, Either<String, List<Integer>>> state = seq(
+				rows, lastPlay).parse(result.toString()).token;
 		int size = state.first.size();
 		AtroposCircle[][] board = new AtroposCircle[size][size];
 		for (int i = 0; i < size - 1; ++i) {
@@ -50,9 +52,12 @@ public class AtroposStateReader {
 			board[0][j + 1] = new AtroposCircle(j < row.size() ? row.get(j)
 					: Colors.Uncolored.getValue(), 0, j + 1, size - 1 - j);
 		}
-		
-		return new AtroposState(board, new AtroposCircle(state.second.get(0),
-				state.second.get(1), state.second.get(2), state.second.get(3)));
+		if(state.second.isLeft()) {
+			return new AtroposState(board, null);
+		}
+		return new AtroposState(board, new AtroposCircle(state.second
+				.getRight().get(0), state.second.getRight().get(1),
+				state.second.getRight().get(2), state.second.getRight().get(3)));
 	}
 	
 	private static class ParseResult<T> {
@@ -127,6 +132,9 @@ public class AtroposStateReader {
 		public boolean isValid(String toParse) {
 			return toParse.startsWith(token);
 		}
+	}
+	public static <T> Parser<T> oneOf(Parser<T>... parsers) {
+		return new OneOfParser<T>(Arrays.asList(parsers));
 	}
 	public static class OneOfParser<T> implements Parser<T> {
 		private final List<Parser<T>> options;
@@ -253,6 +261,37 @@ public class AtroposStateReader {
 					&& second.isValid(first.parse(toParse).rest);
 		}
 	}
+	
+	public static final <A, B> Parser<Either<A, B>> or(Parser<A> left, Parser<B> right) {
+		return new Or<A, B>(left, right);
+	}
+	public static class Or<A, B> implements Parser<Either<A, B>> {
+		private Parser<A> left;
+		private Parser<B> right;
+
+		public Or(Parser<A> left, Parser<B> right) {
+			this.left = left;
+			this.right = right;
+		}
+
+		@Override
+		public boolean isValid(String toParse) {
+			return right.isValid(toParse) || left.isValid(toParse);
+		}
+
+		@Override
+		public ParseResult<Either<A, B>> parse(String toParse) {
+			if (right.isValid(toParse)) {
+				ParseResult<B> parsed = right.parse(toParse);
+				return new ParseResult<Either<A, B>>(Either
+						.<A, B> right(parsed.token), parsed.rest);
+			}
+			ParseResult<A> parsed = left.parse(toParse);
+			return new ParseResult<Either<A, B>>(Either
+					.<A, B> left(parsed.token), parsed.rest);
+		}
+	}
+
 	public static <A, B> Parser<A> asFirst(Sequence<A, B> sequence) {
 		return new AsFirst<A, B>(sequence);
 	}
@@ -441,7 +480,11 @@ public class AtroposStateReader {
 	public static Parser<List<Integer>> row = asFirst(seq(asSecond(seq(
 			token("["), oneOrMore(baseTen))), token("]")));
 	public static Parser<List<List<Integer>>> rows = many(row);
-	public static Parser<List<Integer>> lastPlay = asFirst(seq(asSecond(seq(
-			token("LastPlay:("), separatedBy(integer, ","))), token(")")));
-
+	public static Parser<Either<String, List<Integer>>> lastPlay = 
+		asSecond(seq(
+				token("LastPlay:"), 
+					or(token("null"), 
+					   asFirst(seq(
+							   asSecond(seq(token("("), separatedBy(integer, ","))),
+							   token(")"))))));
 }
