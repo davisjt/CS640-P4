@@ -333,6 +333,33 @@ public class AtroposState {
     this.circles[height][leftDistance].color(color);
   }
   
+  public String asString() {
+	  StringBuilder result = new StringBuilder();
+	  for(int i = 0; i < circles.length - 1; ++i) {
+		  result.append("[");
+		  int height = circles.length - i - 1;
+		  for (int j = 0; j < i + 2; ++j) {
+			  result.append(circles[height][j].getColor());
+		  }
+		  result.append("]");
+	  }
+	  // unroll last iteration
+	  result.append("[");
+	  for(int j = 1; j < circles.length; ++j) {
+		  result.append(circles[0][j].getColor());
+	  }
+	  result.append("]");
+	  result.append("LastPlay:(")
+	  	.append(lastPlay.getColor())
+	  	.append(",")
+	  	.append(lastPlay.height())
+	  	.append(",")
+	  	.append(lastPlay.leftDistance())
+	  	.append(",")
+	  	.append(lastPlay.rightDistance())
+	    .append(")");
+	  return result.toString();
+  }
   
   //toString
   
