@@ -22,7 +22,7 @@ public class Player {
 		int value = 0;
 		
 		// If this is a losing move, immediately return -100
-		if (wouldLose(currentstate, proposedmove))
+		if (currentstate.isFinished())
 			return -100;
 		else {
 			// Get neighbors
@@ -83,23 +83,6 @@ public class Player {
 	}
 	
 	/**
-	 * Method to determine if the move would cause the game to end
-	 * 
-	 * @param state
-	 * 			The current state of the board
-	 * @param proposedmove
-	 * 			The proposed move to make
-	 * @return
-	 * 			If the move would result in the game ending
-	 */
-	private boolean wouldLose(AtroposState state, AtroposMove proposedmove) {
-		proposedmove.getCircle().color(proposedmove.getColor().getValue());
-		state.makePlay(proposedmove.getCircle());
-		
-		return state.isFinished();
-	}
-	
-	/**
 	 * Main method for the player to make a move
 	 * 
 	 * @param currentstate
@@ -118,10 +101,11 @@ public class Player {
 		
 			// Iterate through each color
 			for(int i=1; i< colors.length; i++){
-				circle.color(i); 											// color the circle
+				AtroposCircle circlecopy = circle.clone();					// color the circle
+				circlecopy.color(i);
 				AtroposMove nextMove = new AtroposMove(circle, colors[i]);	// make new move	
 				AtroposState nextState = currentstate.clone(); 				// copy the current state
-				nextState.makePlay(circle);
+				nextState.makePlay(circlecopy);
 				
 				// Get the value of the move based on alpha beta procedure
 				int val = alphabeta(new StateMove(currentstate, nextMove), 3, -100, 100);
@@ -169,10 +153,11 @@ public class Player {
 			AtroposCircle circle = (AtroposCircle) circleIterator.next();
 			
 			for(int i=1; i< colors.length; i++){
-				AtroposMove nextMove = new AtroposMove(circle, colors[i]);	// make new move	
-				circle.color(i); 											// color the circle
+				AtroposCircle circlecopy = circle.clone();
+				AtroposMove nextMove = new AtroposMove(circlecopy, colors[i]);	// make new move	
+				circlecopy.color(i); 											// color the circle
 				AtroposState nextState = currState.clone(); 				// copy the current state
-				nextState.makePlay(circle); 								// make move on copy
+				nextState.makePlay(circlecopy); 								// make move on copy
 				StateMove nextSM = new StateMove(nextState, nextMove);		// create new StateMove object 
 				childStateMoves.add(nextSM);
 			}
