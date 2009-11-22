@@ -373,8 +373,8 @@ public class AtroposStateReader {
 		public ParseResult<String> parse(String toParse) {
 			ParseResult<List<String>> parsed = chars.parse(toParse);
 			StringBuilder joined = new StringBuilder();
-			for (String digit : parsed.token) {
-				joined.append(digit);
+			for (String element : parsed.token) {
+				joined.append(element);
 			}
 			return new ParseResult<String>(joined.toString(), parsed.rest);
 		}
