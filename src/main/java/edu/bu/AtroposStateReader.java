@@ -45,10 +45,10 @@ public class AtroposStateReader {
 		}
 		// unroll last iteration
 		List<Integer> row = state.first.get(size - 1);
-		board[0][0] = new AtroposCircle(Colors.Uncolored.getValue(), 0, 0, size - 1);
-		for (int j = 1; j < size; ++j) {
-			board[0][j] = new AtroposCircle(j < row.size() ? row.get(j)
-					: Colors.Uncolored.getValue(), 0, j, size - 1 - j);
+		board[0][0] = new AtroposCircle(Colors.Uncolored.getValue(), 0, 0, size);
+		for (int j = 0; j < row.size(); ++j) {
+			board[0][j + 1] = new AtroposCircle(j < row.size() ? row.get(j)
+					: Colors.Uncolored.getValue(), 0, j + 1, size - 1 - j);
 		}
 		
 		return new AtroposState(board, new AtroposCircle(state.second.get(0),
