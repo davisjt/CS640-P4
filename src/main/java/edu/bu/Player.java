@@ -18,7 +18,7 @@ public class Player {
 	 * @return
 	 * 			The value of that move per the static evaluators
 	 */
-	private int EvaluateMove(AtroposState currentstate, AtroposMove proposedmove) {
+	private int EvaluateMove(AtroposState currentstate) {
 		int value = 0;
 		
 		// If this is a losing move, immediately return -100
@@ -26,8 +26,8 @@ public class Player {
 			return -100;
 		else {
 			// Get neighbors
-			int height = proposedmove.getCircle().height();
-		    int leftDistance = proposedmove.getCircle().leftDistance();
+			int height = currentstate.lastPlay.height();
+		    int leftDistance = currentstate.lastPlay.leftDistance();
 		    int leftUpColor = currentstate.circles[height + 1][leftDistance - 1].getColor();
 		    int leftColor = currentstate.circles[height][leftDistance - 1].getColor();
 		    int leftDownColor = currentstate.circles[height - 1][leftDistance].getColor();
@@ -65,17 +65,17 @@ public class Player {
 				value--;
 			
 			// Add for neighbors with the same color (good)
-			if (leftUpColor == proposedmove.getColor().getValue())
+			if (leftUpColor == currentstate.lastPlay.getColor())
 				value++;
-			if (leftColor == proposedmove.getColor().getValue())
+			if (leftColor == currentstate.lastPlay.getColor())
 				value++;
-			if (leftDownColor == proposedmove.getColor().getValue())
+			if (leftDownColor == currentstate.lastPlay.getColor())
 				value++;
-			if (rightDownColor == proposedmove.getColor().getValue())
+			if (rightDownColor == currentstate.lastPlay.getColor())
 				value++;
-			if (rightColor == proposedmove.getColor().getValue())
+			if (rightColor == currentstate.lastPlay.getColor())
 				value++;
-			if (rightUpColor == proposedmove.getColor().getValue())
+			if (rightUpColor == currentstate.lastPlay.getColor())
 				value++;
 		}
 		
@@ -92,32 +92,28 @@ public class Player {
 	 */
 	public AtroposState makeMove(AtroposState currentstate) {
 		AtroposCircle bestCircle = null;
-		int bestval = -200;
-		Colors[] colors = Colors.values();
+		int bestAlpha = Integer.MIN_VALUE;
 		
 		// loop through all playable next circles
-		for (Iterator<AtroposCircle> circleIterator = currentstate.playableCircles(); circleIterator.hasNext();) {
+	    Colors[] colors = Colors.values();
+		for (Iterator<AtroposCircle> circleIterator = currentstate.playableCircles(); circleIterator.hasNext(); ) {
 			AtroposCircle circle = (AtroposCircle) circleIterator.next();
-		
-			// Iterate through each color
-			for(int i=1; i< colors.length; i++){
-				AtroposCircle circlecopy = circle.clone();					// color the circle
-				circlecopy.color(i);
-				AtroposMove nextMove = new AtroposMove(circle, colors[i]);	// make new move	
-				AtroposState nextState = currentstate.clone(); 				// copy the current state
-				nextState.makePlay(circlecopy);
+			
+			for(int i = 1; i < colors.length; i++){
+				AtroposCircle circlecopy = circle.clone();	
+				circlecopy.color(i); 							// color the circle
+				AtroposState nextState = currentstate.clone(); 	// copy the current state
+				nextState.makePlay(circlecopy); 				// make move on copy 
 				
-				// Get the value of the move based on alpha beta procedure
-				int val = alphabeta(new StateMove(currentstate, nextMove), 3, -100, 100);
+				int alpha = alphabeta(nextState, 3, Integer.MIN_VALUE, Integer.MAX_VALUE);
 				
-				// Is it better?
-				if (val > bestval) {
-					bestval = val;
-					bestCircle = circle;
+				if (alpha > bestAlpha) {
+					bestAlpha = alpha;
+					bestCircle = circlecopy;
 				}
 			}
 		}
-	
+		
 		// Make the play
 		currentstate.makePlay(bestCircle);
 		
@@ -139,34 +135,32 @@ public class Player {
 	 * @return
 	 * 			The value of the proposed move
 	 */
-	private int alphabeta(StateMove sm, int depth, int alpha, int beta){
-		ArrayList <StateMove> childStateMoves = new ArrayList<StateMove>();
-		AtroposState currState = sm.getState();
+	private int alphabeta(AtroposState state, int depth, int alpha, int beta){
+		ArrayList<AtroposState> childStates = new ArrayList<AtroposState>();
 		
 		// If we got a losing condition or the depth is reached, return
-	    if( currState.isFinished() || depth == 0)
-			return this.EvaluateMove(sm.getState(), sm.getMove());
+	    if(state.isFinished() || depth == 0)
+			return this.EvaluateMove(state);
 	    
 	    // loop through all playable next circles
 	    Colors[] colors = Colors.values();
-		for (Iterator<AtroposCircle> circleIterator = currState.playableCircles(); circleIterator.hasNext(); ) {
+		for (Iterator<AtroposCircle> circleIterator = state.playableCircles(); circleIterator.hasNext(); ) {
 			AtroposCircle circle = (AtroposCircle) circleIterator.next();
 			
-			for(int i=1; i< colors.length; i++){
-				AtroposCircle circlecopy = circle.clone();
-				AtroposMove nextMove = new AtroposMove(circlecopy, colors[i]);	// make new move	
-				circlecopy.color(i); 											// color the circle
-				AtroposState nextState = currState.clone(); 				// copy the current state
-				nextState.makePlay(circlecopy); 								// make move on copy
-				StateMove nextSM = new StateMove(nextState, nextMove);		// create new StateMove object 
-				childStateMoves.add(nextSM);
+			for(int i = 1; i < colors.length; i++){
+				AtroposCircle circlecopy = circle.clone();	
+				circlecopy.color(i); 						// color the circle
+				AtroposState nextState = state.clone(); 	// copy the current state
+				nextState.makePlay(circlecopy); 			// make move on copy 
+				childStates.add(nextState);
 			}
 		}
 		
 		// loop through all child states and call alphabeta
-		for(StateMove childSM : childStateMoves) {
-			alpha = Math.max(alpha, -alphabeta(childSM, depth-1, -beta, -alpha));
-			if (beta<=alpha)
+		for(AtroposState child : childStates) {	
+			alpha = Math.max(alpha, -alphabeta(child, depth-1, -beta, -alpha));
+			
+			if (beta <= alpha)
 				break;
 		}
 		
