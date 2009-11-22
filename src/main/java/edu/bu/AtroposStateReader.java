@@ -95,14 +95,6 @@ public class AtroposStateReader {
 		public static Unit unit = new Unit();
 		private Unit() {};
 	}
-	public static class Pair<A, B> {
-		public final A first;
-		public final B second;
-		public Pair(A first, B second) {
-			this.first = first;
-			this.second = second;
-		}
-	}
 	public static Parser<String> token(String token) {
 		return new Token(token);
 	}
@@ -253,7 +245,7 @@ public class AtroposStateReader {
 		 */
 		@Override
 		public String toString() {
-			return first + " " + second;
+			return first.toString() + second;
 		}
 		@Override
 		public boolean isValid(String toParse) {
@@ -381,8 +373,8 @@ public class AtroposStateReader {
 		public ParseResult<String> parse(String toParse) {
 			ParseResult<List<String>> parsed = chars.parse(toParse);
 			StringBuilder joined = new StringBuilder();
-			for (String digit : parsed.token) {
-				joined.append(digit);
+			for (String element : parsed.token) {
+				joined.append(element);
 			}
 			return new ParseResult<String>(joined.toString(), parsed.rest);
 		}
@@ -421,6 +413,7 @@ public class AtroposStateReader {
 			return digit.isValid(toParse);
 		}
 	}
+
 	public static Parser<Integer> baseTen = new Parser<Integer>() {
 		@Override
 		public boolean isValid(String toParse) {
@@ -438,7 +431,12 @@ public class AtroposStateReader {
 						+ parsed.token + "\".  Remaining: " + parsed.rest, nfe);
 			}
 			return new ParseResult<Integer>(result, parsed.rest);
-		}};
+		}
+		@Override
+		public String toString() {
+			return "<digit>";
+		}
+	};
 	
 	public static Parser<List<Integer>> row = asFirst(seq(asSecond(seq(
 			token("["), oneOrMore(baseTen))), token("]")));
