@@ -10,78 +10,18 @@ import java.util.Iterator;
  * Class that handles the logic of the player
  */
 public class Player {	
+	private int depth = 3;
+	private Evaluator evaluator;
+
 	/**
-	 * Static evaluator method to determine the value of the move
-	 * 
-	 * @param proposedmove
-	 * 			The move that we want to make
-	 * @return
-	 * 			The value of that move per the static evaluators
+	 * @param depth
+	 * @param evaluator
 	 */
-	private int EvaluateMove(AtroposState currentstate) {
-		int value = 0;
-		
-		// If this is a losing move, immediately return -100
-		if (currentstate.isFinished())
-			return -100;
-		else {
-			// Get neighbors
-			int height = currentstate.lastPlay.height();
-		    int leftDistance = currentstate.lastPlay.leftDistance();
-		    int leftUpColor = currentstate.circles[height + 1][leftDistance - 1].getColor();
-		    int leftColor = currentstate.circles[height][leftDistance - 1].getColor();
-		    int leftDownColor = currentstate.circles[height - 1][leftDistance].getColor();
-		    int rightDownColor = currentstate.circles[height - 1][leftDistance + 1].getColor();
-		    int rightColor = currentstate.circles[height][leftDistance + 1].getColor();
-		    int rightUpColor = currentstate.circles[height + 1][leftDistance].getColor();
-		    
-			// Add the number of open spaces
-			// More spaces = less chance of losing
-			if (leftUpColor == Colors.Uncolored.getValue())
-				value++;
-			if (leftColor == Colors.Uncolored.getValue())
-				value++;
-			if (leftDownColor == Colors.Uncolored.getValue())
-				value++;
-			if (rightDownColor == Colors.Uncolored.getValue())
-				value++;
-			if (rightColor == Colors.Uncolored.getValue())
-				value++;
-			if (rightUpColor == Colors.Uncolored.getValue())
-				value++;
-			
-			// Subtract for neighbors where the next neighbor is different (bad)
-			if (leftUpColor != leftColor)
-				value--;
-			if (leftColor != leftDownColor)
-				value--;
-			if (leftDownColor != rightDownColor)
-				value--;
-			if (rightDownColor != rightColor)
-				value--;
-			if (rightColor != rightUpColor)
-				value--;
-			if (rightUpColor != leftUpColor)
-				value--;
-			
-			// Add for neighbors with the same color (good)
-			if (leftUpColor == currentstate.lastPlay.getColor())
-				value++;
-			if (leftColor == currentstate.lastPlay.getColor())
-				value++;
-			if (leftDownColor == currentstate.lastPlay.getColor())
-				value++;
-			if (rightDownColor == currentstate.lastPlay.getColor())
-				value++;
-			if (rightColor == currentstate.lastPlay.getColor())
-				value++;
-			if (rightUpColor == currentstate.lastPlay.getColor())
-				value++;
-		}
-		
-		return value;
+	public Player(int depth, Evaluator evaluator) {
+		this.depth = depth;
+		this.evaluator = evaluator;
 	}
-	
+
 	/**
 	 * Main method for the player to make a move
 	 * 
@@ -105,7 +45,7 @@ public class Player {
 				AtroposState nextState = currentstate.clone(); 	// copy the current state
 				nextState.makePlay(circlecopy); 				// make move on copy 
 				
-				int alpha = alphabeta(nextState, 3, Integer.MIN_VALUE, Integer.MAX_VALUE);
+				int alpha = alphabeta(nextState, depth , Integer.MIN_VALUE, Integer.MAX_VALUE);
 				
 				if (alpha > bestAlpha) {
 					bestAlpha = alpha;
@@ -140,7 +80,7 @@ public class Player {
 		
 		// If we got a losing condition or the depth is reached, return
 	    if(state.isFinished() || depth == 0)
-			return this.EvaluateMove(state);
+			return evaluator.evaluateMove(state);
 	    
 	    // loop through all playable next circles
 	    Colors[] colors = Colors.values();
